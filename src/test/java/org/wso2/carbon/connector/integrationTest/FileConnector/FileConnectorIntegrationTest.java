@@ -157,8 +157,7 @@ public class FileConnectorIntegrationTest extends ConnectorIntegrationTestBase {
     /**
      * Positive test case for read file method with mandatory parameters.
      */
-    @Test(groups = {"wso2.esb"}, description = "FileConnector read file integration test",
-            dependsOnMethods = {"testisFileExistFile"})
+    @Test(groups = {"wso2.esb"}, description = "FileConnector read file integration test")
     public void testReadFile() throws Exception {
         esbRequestHeadersMap.put("Action", "urn:read");
         RestResponse<JSONObject> esbRestResponse =
@@ -282,18 +281,18 @@ public class FileConnectorIntegrationTest extends ConnectorIntegrationTestBase {
         Assert.assertEquals(esbRestResponse.getHttpStatusCode(), 202);
     }
 
-//    /**
-//     * Positive test case for move method with mandatory parameters.
-//     */
-//    @Test(groups = {"wso2.esb"}, description = "FileConnector move file integration test")
-//    public void testMoveFile() throws Exception {
-//        esbRequestHeadersMap.put("Action", "urn:move");
-//        RestResponse<JSONObject> esbRestResponse =
-//                sendJsonRestRequest(proxyUrl, "POST", esbRequestHeadersMap,
-//                        "FileMoveMandatory.json");
-//        Assert.assertEquals(esbRestResponse.getHttpStatusCode(), 200);
-//        Assert.assertEquals(true, esbRestResponse.getBody().toString().contains("true"));
-//    }
+    /**
+     * Positive test case for move method with mandatory parameters.
+     */
+    @Test(groups = {"wso2.esb"}, description = "FileConnector move file integration test",  dependsOnMethods = {"testReadFile"})
+    public void testMoveFile() throws Exception {
+        esbRequestHeadersMap.put("Action", "urn:move");
+        RestResponse<JSONObject> esbRestResponse =
+                sendJsonRestRequest(proxyUrl, "POST", esbRequestHeadersMap,
+                        "FileMoveMandatory.json");
+        Assert.assertEquals(esbRestResponse.getHttpStatusCode(), 200);
+        Assert.assertEquals(true, esbRestResponse.getBody().toString().contains("true"));
+    }
 
     /**
      * Negative test case for move method with mandatory parameters.

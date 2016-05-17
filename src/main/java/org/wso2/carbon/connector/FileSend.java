@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -115,7 +115,7 @@ public class FileSend extends AbstractConnector implements Connector {
             fileObj = manager.resolveFile(address, FileConnectorUtils.init(messageContext));
             if (fileObj.exists()) {
                 if (fileObj.getType() == FileType.FOLDER) {
-                    address = address.concat("/response.xml");
+                    address = address.concat(FileConstants.DEFAULT_RESPONSE_FILE);
                     fileObj = manager.resolveFile(address, FileConnectorUtils.init(messageContext));
                 }
                 MessageFormatter messageFormatter = getMessageFormatter(axis2MessageContext);

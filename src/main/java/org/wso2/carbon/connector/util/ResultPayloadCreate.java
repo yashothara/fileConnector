@@ -156,7 +156,6 @@ public class ResultPayloadCreate {
             }
             // set the message payload to the message context
             InputStream in;
-
             if (builder instanceof DataSourceMessageBuilder && "true".equals(streaming)) {
                 in=null;
                 dataSource = ManagedDataSourceFactory.create(new FileObjectDataSource(file, contentType));
