@@ -40,7 +40,6 @@ public class FileConnectorIntegrationTest extends ConnectorIntegrationTestBase {
      */
     @BeforeClass(alwaysRun = true)
     public void setEnvironment() throws Exception {
-
         init("fileconnector-connector-2.0.2-SNAPSHOT");
         esbRequestHeadersMap.put("Accept-Charset", "UTF-8");
         esbRequestHeadersMap.put("Content-Type", "application/json");
@@ -284,7 +283,7 @@ public class FileConnectorIntegrationTest extends ConnectorIntegrationTestBase {
     /**
      * Positive test case for move method with mandatory parameters.
      */
-    @Test(groups = {"wso2.esb"}, description = "FileConnector move file integration test",  dependsOnMethods = {"testReadFile"})
+    @Test(groups = {"wso2.esb"}, description = "FileConnector move file integration test", dependsOnMethods = {"testReadFile"})
     public void testMoveFile() throws Exception {
         esbRequestHeadersMap.put("Action", "urn:move");
         RestResponse<JSONObject> esbRestResponse =
@@ -356,6 +355,7 @@ public class FileConnectorIntegrationTest extends ConnectorIntegrationTestBase {
                         "FileFtpOverProxyMandatoryNegative.json");
         Assert.assertEquals(esbRestResponse.getHttpStatusCode(), 202);
     }
+
     /**
      * Positive test case for send method with mandatory parameters.
      */

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -42,7 +43,6 @@ import org.wso2.carbon.connector.core.util.ConnectorUtils;
 import org.wso2.carbon.connector.util.FileConnectorUtils;
 import org.wso2.carbon.connector.util.FileConstants;
 import org.wso2.carbon.connector.util.ResultPayloadCreate;
-
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
@@ -106,14 +106,13 @@ public class FileSend extends AbstractConnector implements Connector {
      */
     private boolean sendResponseFile(String address, MessageContext messageContext, boolean append) {
         boolean resultStatus = false;
-        FileObject fileObj = null;
+        FileObject fileObj;
         StandardFileSystemManager manager = null;
         try {
             manager = FileConnectorUtils.getManager();
             org.apache.axis2.context.MessageContext axis2MessageContext = ((Axis2MessageContext) messageContext).
                     getAxis2MessageContext();
             fileObj = manager.resolveFile(address, FileConnectorUtils.init(messageContext));
-            if (fileObj.exists()) {
                 if (fileObj.getType() == FileType.FOLDER) {
                     address = address.concat(FileConstants.DEFAULT_RESPONSE_FILE);
                     fileObj = manager.resolveFile(address, FileConnectorUtils.init(messageContext));
@@ -132,10 +131,6 @@ public class FileSend extends AbstractConnector implements Connector {
                 } finally {
                     os.close();
                 }
-            } else {
-                log.error("The file/folder location does not exist.");
-                resultStatus = false;
-            }
         } catch (IOException e) {
             handleException("Unable to send a file/folder.", e, messageContext);
             resultStatus = false;
@@ -147,4 +142,3 @@ public class FileSend extends AbstractConnector implements Connector {
         return resultStatus;
     }
 }
-
