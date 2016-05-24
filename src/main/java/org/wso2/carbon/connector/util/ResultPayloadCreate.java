@@ -157,7 +157,7 @@ public class ResultPayloadCreate {
             // set the message payload to the message context
             InputStream in;
             if (builder instanceof DataSourceMessageBuilder && "true".equals(streaming)) {
-                in=null;
+                in = null;
                 dataSource = ManagedDataSourceFactory.create(new FileObjectDataSource(file, contentType));
             } else {
                 in = new AutoCloseInputStream(file.getContent().getInputStream());
@@ -173,7 +173,6 @@ public class ResultPayloadCreate {
             }
             //We need this to build the complete message before closing the stream
             //noinspection ResultOfMethodCallIgnored
-            documentElement.toString();
             msgCtx.setEnvelope(TransportUtils.createSOAPEnvelope(documentElement));
         } catch (SynapseException se) {
             throw se;

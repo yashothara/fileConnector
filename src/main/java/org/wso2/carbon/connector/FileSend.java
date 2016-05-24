@@ -43,6 +43,7 @@ import org.wso2.carbon.connector.core.util.ConnectorUtils;
 import org.wso2.carbon.connector.util.FileConnectorUtils;
 import org.wso2.carbon.connector.util.FileConstants;
 import org.wso2.carbon.connector.util.ResultPayloadCreate;
+
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
@@ -50,7 +51,7 @@ public class FileSend extends AbstractConnector implements Connector {
     private static final Log log = LogFactory.getLog(FileSend.class);
 
     public void connect(MessageContext messageContext) throws ConnectException {
-        boolean append = true;
+        boolean append = false;
         String address = (String) ConnectorUtils.lookupTemplateParamater(messageContext, FileConstants.ADDRESS);
         String strAppend = (String) ConnectorUtils.lookupTemplateParamater(messageContext, FileConstants.APPEND);
         if (strAppend != null) {
@@ -73,11 +74,11 @@ public class FileSend extends AbstractConnector implements Connector {
             OMElement element = resultPayload.performSearchMessages(response);
             resultPayload.preparePayload(messageContext, element);
         } catch (XMLStreamException e) {
-            handleException(e.getMessage(), messageContext);
+            handleException(e.getMessage(), e, messageContext);
         } catch (IOException e) {
-            handleException(e.getMessage(), messageContext);
+            handleException(e.getMessage(), e, messageContext);
         } catch (JSONException e) {
-            handleException(e.getMessage(), messageContext);
+            handleException(e.getMessage(), e, messageContext);
         }
     }
 
@@ -108,33 +109,36 @@ public class FileSend extends AbstractConnector implements Connector {
         boolean resultStatus = false;
         FileObject fileObj;
         StandardFileSystemManager manager = null;
+        CountingOutputStream os = null;
         try {
             manager = FileConnectorUtils.getManager();
             org.apache.axis2.context.MessageContext axis2MessageContext = ((Axis2MessageContext) messageContext).
                     getAxis2MessageContext();
             fileObj = manager.resolveFile(address, FileConnectorUtils.init(messageContext));
-                if (fileObj.getType() == FileType.FOLDER) {
-                    address = address.concat(FileConstants.DEFAULT_RESPONSE_FILE);
-                    fileObj = manager.resolveFile(address, FileConnectorUtils.init(messageContext));
+            if (fileObj.getType() == FileType.FOLDER) {
+                address = address.concat(FileConstants.DEFAULT_RESPONSE_FILE);
+                fileObj = manager.resolveFile(address, FileConnectorUtils.init(messageContext));
+            }
+            MessageFormatter messageFormatter = getMessageFormatter(axis2MessageContext);
+            OMOutputFormat format = BaseUtils.getOMOutputFormat(axis2MessageContext);
+            os = new CountingOutputStream(fileObj.getContent().getOutputStream(append));
+            if (format != null && os != null && messageContext != null) {
+                messageFormatter.writeTo(axis2MessageContext, format, os, true);
+                resultStatus = true;
+                if (log.isDebugEnabled()) {
+                    log.debug("File send completed to " + address);
+                } else {
+                    log.error("File can not send to" + address);
                 }
-                MessageFormatter messageFormatter = getMessageFormatter(axis2MessageContext);
-                OMOutputFormat format = BaseUtils.getOMOutputFormat(axis2MessageContext);
-                CountingOutputStream os = new CountingOutputStream(fileObj.getContent().getOutputStream(append));
-                try {
-                    if (format != null && os != null && messageContext != null) {
-                        messageFormatter.writeTo(axis2MessageContext, format, os, true);
-                        resultStatus = true;
-                        if (log.isDebugEnabled()) {
-                            log.debug("File send completed to " + address);
-                        }
-                    }
-                } finally {
-                    os.close();
-                }
+            }
         } catch (IOException e) {
             handleException("Unable to send a file/folder.", e, messageContext);
-            resultStatus = false;
         } finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                handleException("Unable to send a file/folder.", e, messageContext);
+            }
             if (manager != null) {
                 manager.close();
             }

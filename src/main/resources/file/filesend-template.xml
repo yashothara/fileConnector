@@ -19,19 +19,12 @@
 
 <template xmlns="http://ws.apache.org/ns/synapse" name="send">
     <!--Required Parameters-->
-    <parameter name="address"/>
+    <parameter name="address" description="The address where file has to send."/>
     <!--Supported Parameters-->
-    <parameter name="append"/>
+    <parameter name="append" description="Whether to append to existing file or not."/>
     <sequence>
-        <property name="OUT_ONLY" value="true"/>
-        <property name="ClientApiNonBlocking"
-                  value="true"
-                  scope="axis2"
-                  action="remove"/>
-        <log level="full" category="debug">
-            <property name="address" expression="$func:address"/>
-            <property name="append" expression="$func:append"/>
-        </log>
+        <property name="address" expression="$func:address"/>
+        <property name="append" expression="$func:append"/>
         <class name="org.wso2.carbon.connector.FileSend"/>
     </sequence>
 </template>

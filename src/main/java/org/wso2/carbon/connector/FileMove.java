@@ -61,11 +61,11 @@ public class FileMove extends AbstractConnector implements Connector {
             OMElement element = resultPayload.performSearchMessages(response);
             resultPayload.preparePayload(messageContext, element);
         } catch (XMLStreamException e) {
-            handleException(e.getMessage(), messageContext);
+            handleException(e.getMessage(), e, messageContext);
         } catch (IOException e) {
-            handleException(e.getMessage(), messageContext);
+            handleException(e.getMessage(), e, messageContext);
         } catch (JSONException e) {
-            handleException(e.getMessage(), messageContext);
+            handleException(e.getMessage(), e, messageContext);
         }
     }
 
